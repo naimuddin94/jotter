@@ -1,14 +1,12 @@
 /* eslint-disable no-unused-vars */
-import { Document, ObjectId } from 'mongoose';
+import { z } from 'zod';
 import { TPlan, TRole, TStatus } from './user.constant';
+import { UserValidation } from './user.validation';
 
-export interface IUser extends Document {
-  _id: ObjectId;
+export interface IUser
+  extends z.infer<typeof UserValidation.createSchema.shape.body> {
   name?: string;
-  email: string;
-  username: string;
   image?: string;
-  password: string;
   role: TRole;
   refreshToken?: string | null;
   verificationCode?: string | null;

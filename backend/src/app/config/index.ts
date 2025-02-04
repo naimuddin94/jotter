@@ -23,9 +23,8 @@ export default {
   cloudinary_api_secret: process.env.CLOUDINARY_API_SECRET,
   client_url: process.env.CLIENT_URL,
   default_storage_in_gb: process.env.DEFAULT_STORAGE_IN_GB,
-  email: {
-    template_id: process.env.EMAIL_TEMPLATE_ID,
-    service_id: process.env.EMAIL_SERVICE_ID,
-    user_id: process.env.EMAIL_USER_ID,
+  nodemailer: {
+    email: process.env.EMAIL_FOR_NODEMAILER,
+    password: process.env.PASSWORD_FOR_NODEMAILER,
   },
 };

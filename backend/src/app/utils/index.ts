@@ -4,6 +4,7 @@ import asyncHandler from './asyncHandler';
 import fileUploadOnCloudinary from './fileUploadOnCloudinary';
 import globalErrorHandler from './globalErrorHandler';
 import notFound from './notFound';
+import sendOtpEmail from './sendOtpEmail';
 
 // JWT configuration
 const options = {
@@ -21,4 +22,5 @@ export {
   globalErrorHandler,
   notFound,
   options,
+  sendOtpEmail,
 };

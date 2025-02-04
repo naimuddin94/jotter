@@ -63,6 +63,11 @@ const createSchema = z.object({
 });
 
 const passwordChangeSchema = z.object({
+  cookies: z.object({
+    accessToken: z.string({
+      required_error: 'Access token is required!',
+    }),
+  }),
   body: z.object({
     oldPassword: z
       .string({
@@ -99,8 +104,20 @@ const passwordChangeSchema = z.object({
   }),
 });
 
+const otpSchema = z.object({
+  body: z.object({
+    otp: z
+      .string({
+        required_error: 'OTP is required',
+      })
+      .regex(/^\d+$/, { message: 'OTP must be a number' })
+      .length(6, { message: 'OTP must be exactly 6 digits' }),
+  }),
+});
+
 export const UserValidation = {
   loginSchema,
   createSchema,
   passwordChangeSchema,
+  otpSchema,
 };
