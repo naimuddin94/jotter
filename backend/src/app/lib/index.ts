@@ -1,3 +1,4 @@
+import generateOtp from './generateOtp';
 import verifyToken from './verifyToken';
 
-export { verifyToken };
+export { generateOtp, verifyToken };
