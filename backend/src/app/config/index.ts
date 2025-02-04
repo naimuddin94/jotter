@@ -21,4 +21,5 @@ export default {
   cloudinary_api_key: process.env.CLOUDINARY_API_KEY,
   cloudinary_api_secret: process.env.CLOUDINARY_API_SECRET,
   client_url: process.env.CLIENT_URL,
+  default_storage_in_gb: process.env.DEFAULT_STORAGE_IN_GB,
 };
