@@ -125,4 +125,58 @@ const signinUserIntoDB = async (credentials: ILoginPayload) => {
   };
 };
 
-export const UserService = { saveUserIntoDB, verifyOtpInDB, signinUserIntoDB };
+const sendPasswordResetOtp = async (email: string) => {
+  const user = await User.isUserExists(email);
+
+  if (!user) {
+    throw new AppError(status.NOT_FOUND, 'User not found');
+  }
+
+  const otp = generateOtp();
+  user.verificationCode = otp;
+  user.verificationExpiry = new Date(Date.now() + 5 * 60 * 1000);
+  await user.save();
+
+  // Send the OTP via email
+  await sendOtpEmail(email, otp, user.username);
+
+  return { email };
+};
+
+const resetPasswordIntoDB = async (payload: {
+  email: string;
+  newPassword: string;
+  otp: string;
+}) => {
+  const user = await User.isUserExists(payload.email);
+
+  if (!user) {
+    throw new AppError(status.NOT_FOUND, 'User not found');
+  }
+
+  // Check if the OTP matches
+  if (user.verificationCode !== payload.otp || !user.verificationExpiry) {
+    throw new AppError(status.BAD_REQUEST, 'Invalid OTP');
+  }
+
+  // Check if the OTP has expired
+  if (Date.now() > user.verificationExpiry.getTime()) {
+    throw new AppError(status.BAD_REQUEST, 'OTP has expired');
+  }
+
+  // Update the user's password
+  user.password = payload.newPassword;
+  user.verificationCode = null;
+  user.verificationExpiry = null;
+  await user.save();
+
+  return null;
+};
+
+export const UserService = {
+  saveUserIntoDB,
+  verifyOtpInDB,
+  signinUserIntoDB,
+  sendPasswordResetOtp,
+  resetPasswordIntoDB,
+};

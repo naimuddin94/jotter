@@ -38,12 +38,38 @@ const verifyOtp = asyncHandler(async (req, res) => {
   const result = await UserService.verifyOtpInDB(email, otp);
 
   res
-    .status(status.CREATED)
-    .json(new AppResponse(status.CREATED, result, 'OTP verified successfully'));
+    .status(status.OK)
+    .json(new AppResponse(status.OK, result, 'OTP verified successfully'));
+});
+
+const resetPasswordVerify = asyncHandler(async (req, res) => {
+  const email = req.body.email;
+
+  const result = await UserService.sendPasswordResetOtp(email);
+
+  res
+    .status(status.OK)
+    .json(
+      new AppResponse(
+        status.OK,
+        result,
+        'Your OTP has been successfully sent to your email. If you do not find the email in your inbox, please check your spam or junk folder.'
+      )
+    );
+});
+
+const resetPassword = asyncHandler(async (req, res) => {
+  const result = await UserService.resetPasswordIntoDB(req.body);
+
+  res
+    .status(status.OK)
+    .json(new AppResponse(status.OK, result, 'Reset password successfully'));
 });
 
 export const UserController = {
   signup,
   signin,
   verifyOtp,
+  resetPasswordVerify,
+  resetPassword,
 };

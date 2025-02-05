@@ -115,9 +115,55 @@ const otpSchema = z.object({
   }),
 });
 
+const passwordVerifySchema = z.object({
+  body: z.object({
+    email: z
+      .string({
+        required_error: 'Email is required',
+      })
+      .email({ message: 'Invalid email format' }),
+  }),
+});
+
+const resetPasswordSchema = z.object({
+  body: z.object({
+    email: z
+      .string({
+        required_error: 'Email is required',
+      })
+      .email({ message: 'Invalid email format' }),
+    otp: z
+      .string({
+        required_error: 'OTP is required',
+      })
+      .regex(/^\d+$/, { message: 'OTP must be a number' })
+      .length(6, { message: 'OTP must be exactly 6 digits' }),
+    newPassword: z
+      .string({
+        required_error: 'New password is required',
+      })
+      .min(6, { message: 'New password must be at least 6 characters long' })
+      .max(20, { message: 'New password cannot exceed 20 characters' })
+      .regex(/[A-Z]/, {
+        message: 'New password must contain at least one uppercase letter',
+      })
+      .regex(/[a-z]/, {
+        message: 'New password must contain at least one lowercase letter',
+      })
+      .regex(/[0-9]/, {
+        message: 'New password must contain at least one number',
+      })
+      .regex(/[@$!%*?&#]/, {
+        message: 'New password must contain at least one special character',
+      }),
+  }),
+});
+
 export const UserValidation = {
   signinSchema,
   createSchema,
   passwordChangeSchema,
   otpSchema,
+  passwordVerifySchema,
+  resetPasswordSchema,
 };
