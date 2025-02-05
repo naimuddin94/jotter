@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-const loginSchema = z.object({
+const signinSchema = z.object({
   body: z.object({
     email: z
       .string({
@@ -116,7 +116,7 @@ const otpSchema = z.object({
 });
 
 export const UserValidation = {
-  loginSchema,
+  signinSchema,
   createSchema,
   passwordChangeSchema,
   otpSchema,

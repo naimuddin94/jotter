@@ -1,5 +1,6 @@
+import { CookieOptions } from 'express';
 import status from 'http-status';
-import { AppResponse, asyncHandler } from '../../utils';
+import { AppResponse, asyncHandler, options } from '../../utils';
 import { UserService } from './user.service';
 
 const signup = asyncHandler(async (req, res) => {
@@ -18,6 +19,18 @@ const signup = asyncHandler(async (req, res) => {
     );
 });
 
+const signin = asyncHandler(async (req, res) => {
+  const payload = req.body;
+
+  const result = await UserService.signinUserIntoDB(payload);
+
+  res
+    .status(status.OK)
+    .cookie('accessToken', result.accessToken, options as CookieOptions)
+    .cookie('refreshToken', result.refreshToken, options as CookieOptions)
+    .json(new AppResponse(status.OK, result, 'Signin successfully'));
+});
+
 const verifyOtp = asyncHandler(async (req, res) => {
   const otp = req.body.otp;
   const email = req.params.email;
@@ -31,5 +44,6 @@ const verifyOtp = asyncHandler(async (req, res) => {
 
 export const UserController = {
   signup,
+  signin,
   verifyOtp,
 };

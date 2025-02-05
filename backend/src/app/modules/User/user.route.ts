@@ -10,6 +10,10 @@ router
   .post(validateRequest(UserValidation.createSchema), UserController.signup);
 
 router
+  .route('/signin')
+  .post(validateRequest(UserValidation.signinSchema), UserController.signin);
+
+router
   .route('/verify-otp/:email')
   .post(validateRequest(UserValidation.otpSchema), UserController.verifyOtp);
 

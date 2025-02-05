@@ -1,4 +1,5 @@
 /* eslint-disable no-unused-vars */
+import { HydratedDocument, Model } from 'mongoose';
 import { z } from 'zod';
 import { TPlan, TRole, TStatus } from './user.constant';
 import { UserValidation } from './user.validation';
@@ -24,8 +25,13 @@ export interface IUserMethods {
   generateRefreshToken(): string;
 }
 
+export interface IUserModel
+  extends Model<IUser, Record<string, never>, IUserMethods> {
+  isUserExists(email: string): Promise<HydratedDocument<IUser, IUserMethods>>;
+}
+
 export interface ILoginPayload {
-  identity: string;
+  email: string;
   password: string;
 }
 

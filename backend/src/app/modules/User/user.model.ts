@@ -3,10 +3,10 @@ import jwt from 'jsonwebtoken';
 import mongoose, { Schema } from 'mongoose';
 import config from '../../config';
 import { USER_PLAN, USER_ROLE, USER_STATUS } from './user.constant';
-import { IUser, IUserMethods } from './user.interface';
+import { IUser, IUserMethods, IUserModel } from './user.interface';
 
 // Define the schema for the user model
-const userSchema = new Schema<IUser, IUserMethods>(
+const userSchema = new Schema<IUser, IUserModel, IUserMethods>(
   {
     name: {
       type: String,
@@ -96,6 +96,16 @@ userSchema.pre('save', async function (next) {
   }
 });
 
+// Check that the user exists to database
+userSchema.statics.isUserExists = async function (email: string) {
+  const result = await User.findOne({
+    email,
+    verified: true,
+    status: 'ACTIVE',
+  }).select('+password');
+  return result;
+};
+
 // For check the password is correct
 userSchema.methods.isPasswordCorrect = async function (password: string) {
   return await bcrypt.compare(password, this.password);
@@ -131,6 +141,6 @@ userSchema.methods.generateRefreshToken = function () {
   );
 };
 
-const User = mongoose.model<IUser>('User', userSchema);
+const User = mongoose.model<IUser, IUserModel>('User', userSchema);
 
 export default User;

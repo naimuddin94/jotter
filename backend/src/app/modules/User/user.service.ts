@@ -2,6 +2,7 @@ import status from 'http-status';
 import { z } from 'zod';
 import { generateOtp } from '../../lib';
 import { AppError, sendOtpEmail } from '../../utils';
+import { ILoginPayload } from './user.interface';
 import User from './user.model';
 import { UserValidation } from './user.validation';
 
@@ -82,4 +83,46 @@ const verifyOtpInDB = async (email: string, otp: string) => {
   return null;
 };
 
-export const UserService = { saveUserIntoDB, verifyOtpInDB };
+const signinUserIntoDB = async (credentials: ILoginPayload) => {
+  const user = await User.isUserExists(credentials.email);
+
+  if (!user) {
+    throw new AppError(status.NOT_FOUND, 'User not exists');
+  }
+
+  const isCredentialsCorrect = await user.isPasswordCorrect(
+    credentials.password
+  );
+
+  if (!isCredentialsCorrect) {
+    throw new AppError(status.UNAUTHORIZED, 'Invalid credentials');
+  }
+
+  const accessToken = user.generateAccessToken();
+  const refreshToken = user.generateRefreshToken();
+
+  const userData = await User.findByIdAndUpdate(user._id, {
+    refreshToken,
+  }).select('name email username image plan storageLimit storageUsed');
+
+  if (!userData) {
+    throw new AppError(
+      status.INTERNAL_SERVER_ERROR,
+      'Internal Server Error to set refresh token'
+    );
+  }
+  // Convert `storageLimit` and `storageUsed` from bytes to GB
+  const storageLimitInGB =
+    (userData.storageLimit / 1024 ** 3).toFixed(2) + ' GB';
+  const storageUsedInGB = (userData.storageUsed / 1024 ** 3).toFixed(2) + ' GB';
+
+  return {
+    ...userData.toObject(),
+    storageLimit: storageLimitInGB,
+    storageUsed: storageUsedInGB,
+    accessToken,
+    refreshToken,
+  };
+};
+
+export const UserService = { saveUserIntoDB, verifyOtpInDB, signinUserIntoDB };
