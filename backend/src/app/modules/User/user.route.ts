@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { validateRequest } from '../../middlewares';
+import { auth, validateRequest } from '../../middlewares';
 import { UserController } from './user.controller';
 import { UserValidation } from './user.validation';
 
@@ -13,7 +13,7 @@ router
   .route('/signin')
   .post(validateRequest(UserValidation.signinSchema), UserController.signin);
 
-router.route('/signout').post(UserController.signout);
+router.route('/signout').post(auth('ADMIN', 'USER'), UserController.signout);
 
 router
   .route('/verify-otp/:email')
