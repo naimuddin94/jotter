@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
+import { IFolder } from './folder.interface';
 
-const folderSchema = new mongoose.Schema(
+const folderSchema = new mongoose.Schema<IFolder>(
   {
     name: {
       type: String,
@@ -47,6 +48,6 @@ const folderSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-const Folder = mongoose.model('Folder', folderSchema);
+const Folder = mongoose.model<IFolder>('Folder', folderSchema);
 
 export default Folder;

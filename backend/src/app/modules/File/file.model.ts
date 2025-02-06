@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
+import { IFile } from './file.interface';
 
-const fileSchema = new mongoose.Schema({
+const fileSchema = new mongoose.Schema<IFile>({
   filename: {
     type: String,
     required: true,
@@ -43,10 +44,6 @@ const fileSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
-  deletedAt: {
-    type: Date,
-    default: null,
-  },
   sharedWith: [
     {
       type: mongoose.Schema.Types.ObjectId,
@@ -55,6 +52,6 @@ const fileSchema = new mongoose.Schema({
   ],
 });
 
-const File = mongoose.model('File', fileSchema);
+const File = mongoose.model<IFile>('File', fileSchema);
 
 export default File;
