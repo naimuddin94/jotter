@@ -12,11 +12,20 @@ The backend of the Jotter Storage Management System is designed for efficient an
 
 ---
 
-## **Features**
-
-### **User Management**
+### **Features**
 
 - **Authentication:** Secure JWT-based login and signup.
+
+- **Folder Management:**
+  - Create new folders.
+  - Rename existing folders.
+  - Delete folders.
+  
+- **File Management:**
+  - Upload files to specified folders.
+  - Rename files within the folders.
+
+
 
 ---
 
