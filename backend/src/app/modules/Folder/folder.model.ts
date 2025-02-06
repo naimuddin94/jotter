@@ -26,10 +26,6 @@ const folderSchema = new mongoose.Schema(
         ref: 'File',
       },
     ],
-    size: {
-      type: Number,
-      default: 0,
-    },
     pinned: {
       type: Boolean,
       default: false,
