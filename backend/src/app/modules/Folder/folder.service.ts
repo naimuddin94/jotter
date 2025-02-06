@@ -51,6 +51,88 @@ const saveFolderIntoDB = async (
   return folder;
 };
 
+const deleteFolder = async (accessToken: string, folderId: string) => {
+  const { id } = await verifyToken(accessToken);
+
+  const user = await User.findOne({
+    _id: id,
+    verified: true,
+    status: 'ACTIVE',
+  });
+
+  if (!user) {
+    throw new AppError(status.NOT_FOUND, 'User not exists');
+  }
+
+  const folder = await Folder.findById(folderId);
+
+  if (!folder) {
+    throw new AppError(status.NOT_FOUND, 'Folder not exists');
+  }
+
+  if (!folder.owner.equals(user._id)) {
+    throw new AppError(
+      status.FORBIDDEN,
+      'You are not allowed to delete this folder'
+    );
+  }
+
+  fs.rmSync(folder.folderPath, { recursive: true, force: true });
+
+  await Folder.findByIdAndDelete(folderId);
+  return null;
+};
+
+const renameFolder = async (
+  accessToken: string,
+  folderId: string,
+  newName: string
+) => {
+  const { id } = await verifyToken(accessToken);
+
+  const user = await User.findOne({
+    _id: id,
+    verified: true,
+    status: 'ACTIVE',
+  });
+
+  if (!user) {
+    throw new AppError(status.NOT_FOUND, 'User not exists');
+  }
+
+  const folder = await Folder.findById(folderId);
+
+  if (!folder) {
+    throw new AppError(status.NOT_FOUND, 'Folder not exists');
+  }
+
+  if (!folder.owner.equals(user._id)) {
+    throw new AppError(
+      status.FORBIDDEN,
+      'You are not allowed to rename this folder'
+    );
+  }
+
+  const newFolderPath = path.join(path.dirname(folder.folderPath), newName);
+
+  if (fs.existsSync(newFolderPath)) {
+    throw new AppError(
+      status.BAD_REQUEST,
+      'A folder with the new name already exists'
+    );
+  }
+
+  fs.renameSync(folder.folderPath, newFolderPath);
+
+  folder.name = newName;
+  folder.folderPath = newFolderPath;
+  await folder.save();
+
+  return folder;
+};
+
 export const FolderService = {
   saveFolderIntoDB,
+  deleteFolder,
+  renameFolder,
 };

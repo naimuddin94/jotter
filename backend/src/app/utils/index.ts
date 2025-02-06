@@ -1,10 +1,13 @@
+import multer from 'multer';
 import AppError from './AppError';
 import AppResponse from './AppResponse';
 import asyncHandler from './asyncHandler';
-import fileUploadOnCloudinary from './fileUploadOnCloudinary';
+import getFullFolderPath from './getFullFolderPath';
 import globalErrorHandler from './globalErrorHandler';
 import notFound from './notFound';
 import sendOtpEmail from './sendOtpEmail';
+
+const parseFormData = multer().fields([]);
 
 // JWT configuration
 const options = {
@@ -18,9 +21,10 @@ export {
   AppError,
   AppResponse,
   asyncHandler,
-  fileUploadOnCloudinary,
+  getFullFolderPath,
   globalErrorHandler,
   notFound,
   options,
+  parseFormData,
   sendOtpEmail,
 };

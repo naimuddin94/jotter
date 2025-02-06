@@ -16,6 +16,9 @@ import { globalErrorHandler, notFound } from './app/utils';
 
 const app: Application = express();
 
+// static files
+app.use('/public', express.static('public'));
+
 app.use(
   cors({
     credentials: true,
