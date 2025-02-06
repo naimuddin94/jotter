@@ -31,6 +31,18 @@ const signin = asyncHandler(async (req, res) => {
     .json(new AppResponse(status.OK, result, 'Signin successfully'));
 });
 
+const signout = asyncHandler(async (req, res) => {
+  const accessToken = req.cookies?.accessToken;
+
+  await UserService.signoutUserFromDB(accessToken);
+
+  res
+    .status(status.OK)
+    .clearCookie('accessToken')
+    .clearCookie('refreshToken')
+    .json(new AppResponse(status.OK, null, 'Signout successfully'));
+});
+
 const verifyOtp = asyncHandler(async (req, res) => {
   const otp = req.body.otp;
   const email = req.params.email;
@@ -69,6 +81,7 @@ const resetPassword = asyncHandler(async (req, res) => {
 export const UserController = {
   signup,
   signin,
+  signout,
   verifyOtp,
   resetPasswordVerify,
   resetPassword,

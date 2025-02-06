@@ -13,6 +13,8 @@ router
   .route('/signin')
   .post(validateRequest(UserValidation.signinSchema), UserController.signin);
 
+router.route('/signout').post(UserController.signout);
+
 router
   .route('/verify-otp/:email')
   .post(validateRequest(UserValidation.otpSchema), UserController.verifyOtp);

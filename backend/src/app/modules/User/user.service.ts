@@ -1,6 +1,6 @@
 import status from 'http-status';
 import { z } from 'zod';
-import { generateOtp } from '../../lib';
+import { generateOtp, verifyToken } from '../../lib';
 import { AppError, sendOtpEmail } from '../../utils';
 import { ILoginPayload } from './user.interface';
 import User from './user.model';
@@ -173,10 +173,29 @@ const resetPasswordIntoDB = async (payload: {
   return null;
 };
 
+const signoutUserFromDB = async (accessToken: string) => {
+  // checking if the token is missing
+  if (accessToken) {
+    const { id } = await verifyToken(accessToken);
+
+    const user = await User.findById(id);
+
+    if (!user) {
+      throw new AppError(status.NOT_FOUND, 'User does not exist!');
+    }
+
+    user.refreshToken = null;
+    await user.save();
+  }
+
+  return null;
+};
+
 export const UserService = {
   saveUserIntoDB,
   verifyOtpInDB,
   signinUserIntoDB,
   sendPasswordResetOtp,
   resetPasswordIntoDB,
+  signoutUserFromDB,
 };
