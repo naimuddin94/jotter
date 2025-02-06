@@ -37,14 +37,6 @@ City Computer Backend
 └── tsconfig.json
 ```
 
-### **Controllers:** Handle requests and responses.
-
-### **Models:** Define data schemas using Prisma.
-
-### **Services:** Implement business logic.
-
-### **Routes:** Connect endpoints with controllers.
-
 ---
 
 ## **Getting Started**
